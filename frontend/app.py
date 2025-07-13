@@ -73,11 +73,11 @@ with gr.Blocks(title="📚 Smart Research Assistant", theme=theme) as interface:
 
         with gr.TabItem("🧠 Challenge Me"):
             with gr.Column():
+                gen_btn = gr.Button("🧠 Generate Questions")
                 question_box = gr.Textbox(label="🧪 AI-Generated Question", lines=6)
                 user_answer = gr.Textbox(label="🧍 Your Answer", lines=2)
                 eval_btn = gr.Button("✅ Evaluate Answer")
                 feedback_box = gr.Textbox(label="💡 Feedback", lines=3)
-                gen_btn = gr.Button("🧠 Generate Questions")
 
     # Upload event
     file_input.upload(
