@@ -26,6 +26,7 @@ Built using 💡 Google Gemini API, 🧠 FastAPI, and 🎨 Gradio — crafted fo
 > 💬 No setup needed — just upload your document, get summaries, ask questions, and test your understanding.
 
 ---
+
 ## 🚀 Features
 
 - 📂 **Upload** `.pdf` or `.txt` research papers
@@ -79,9 +80,10 @@ smart-research-assistant/
 ### 1. 📦 Install Required Packages
 
 ```pip install -r requirements.txt```
+
 **Or manually:** ```pip install fastapi uvicorn gradio python-dotenv pdfplumber google-generativeai```
 
-## 2. 🔐 Configure Environment
+### 2. 🔐 Configure Environment
 
 Create a `.env` file in the root directory with your Gemini API key:
 
@@ -91,7 +93,7 @@ GEMINI_API_KEY=your_gemini_api_key_here
 
 > 💡 Make sure you do **not** share your `.env` file or expose your API key in public repositories.
 
-## 3. 🚀 Run the App
+### 3. 🚀 Run the App
 
 ### ➤ Start the FastAPI backend server:
 
@@ -108,8 +110,6 @@ python frontend/app.py
 ```
 
 This will open the smart assistant in your browser (usually at `http://127.0.0.1:7860`).
-
----
 
 ---
 
