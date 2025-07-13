@@ -3,9 +3,9 @@ from backend.parser import read_document
 from backend.summarizer import generate_summary
 from backend.qa_engine import answer_question
 from backend.challenge_engine import generate_questions, evaluate_answer
-from gradio.themes.base import Base
+from gradio.themes.base import Soft
 
-theme = Base()
+theme = Soft()
 
 def handle_upload(file):
     try:
