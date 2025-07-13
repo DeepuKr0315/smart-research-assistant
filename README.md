@@ -1,3 +1,15 @@
+---
+title: Smart Research Assistant
+emoji: 📚
+colorFrom: blue
+colorTo: indigo
+sdk: gradio
+sdk_version: 4.26.0
+app_file: frontend/app.py
+pinned: false
+license: mit
+---
+
 # 📄 Smart Research Assistant 🤖
 
 An AI-powered assistant that reads research papers (PDF/TXT), generates concise summaries, answers custom questions with document-backed justifications, and challenges users with logic-based comprehension questions.
