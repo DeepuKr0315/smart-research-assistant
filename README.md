@@ -46,7 +46,7 @@ smart-research-assistant/
 
 | Layer     | Tools/Frameworks              |
 |-----------|-------------------------------|
-| LLM       | 🌐 Google Gemini API (`gemini-2.5-flash`) |
+| LLM       | 🌐 Google Gemini API (`gemini-2.5-flash-lite-preview-06-17`) |
 | Frontend  | 🎨 Gradio                    |
 | Backend   | ⚙️ FastAPI + Pydantic         |
 | Parsing   | 📄 pdfplumber                 |
