@@ -23,22 +23,21 @@ Built using 💡 Google Gemini API, 🧠 FastAPI, and 🎨 Gradio — crafted fo
 ```
 smart-research-assistant/
 │
-├── backend/                         # All backend logic
-│   ├── parser.py                   # PDF/TXT document parser (pdfplumber)
-│   ├── summarizer.py               # Summary generator using Gemini
-│   ├── qa_engine.py                # Q&A logic via Gemini
-│   ├── challenge_engine.py         # Question generation + evaluation
-│   ├── gemini_client.py            # Gemini API wrapper
-│   └── models.py                   # Pydantic models for FastAPI
-|	└── main.py                         # FastAPI main application
+├── backend/                         # All backend logic + FastAPI entry point
+│   ├── main.py                      # FastAPI main application
+│   ├── parser.py                    # PDF/TXT document parser (pdfplumber)
+│   ├── summarizer.py                # Summary generator using Gemini
+│   ├── qa_engine.py                 # Q&A logic via Gemini
+│   ├── challenge_engine.py          # Question generation + evaluation
+│   ├── gemini_client.py             # Gemini API wrapper
+│   └── models.py                    # Pydantic models for FastAPI
 │
 ├── frontend/
-│   └── app.py                      # Gradio interface
+│   └── app.py                       # Gradio interface
 │
-
-├── .env                            # Environment file (GEMINI_API_KEY)
-├── requirements.txt                # Python dependencies
-└── README.md                       # Project documentation
+├── .env                             # Environment file (GEMINI_API_KEY)
+├── requirements.txt                 # Python dependencies
+└── README.md                        # Project documentation
 ```
 
 ---
