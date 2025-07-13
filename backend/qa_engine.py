@@ -1,42 +1,42 @@
 from backend.gemini_client import generate_text
 import re
 
+
 def clean_output(text: str) -> str:
-    """Remove markdown and unwanted formatting from Gemini output."""
+    """
+    Cleans Gemini output: removes markdown and formatting artifacts.
+    """
     if not text:
         return ""
-    # Remove markdown bold/italic
-    text = re.sub(r'\*{1,2}(.*?)\*{1,2}', r'\1', text)
-    # Remove numbered list prefixes
-    text = re.sub(r'^\d+\.\s*', '', text, flags=re.MULTILINE)
+    text = re.sub(r'\*{1,2}(.*?)\*{1,2}', r'\1', text)           # Remove bold/italic markdown
+    text = re.sub(r'^\d+\.\s*', '', text, flags=re.MULTILINE)    # Remove numbered prefixes
     return text.strip()
+
 
 def answer_question(question: str, context: str) -> dict:
     """
-    Uses Gemini to answer a question based on the provided document context.
-    Returns answer + justification.
+    Uses Gemini to answer a question grounded in the provided document context.
+
+    Returns:
+        dict: {
+            "answer": cleaned answer,
+            "justification": extracted justification (or fallback)
+        }
     """
+
     if not context or "Error" in context:
         return {
             "answer": "Please upload a valid document first.",
             "justification": ""
         }
 
-    prompt = f"""
-Answer the following question clearly and accurately using only information from the document.
-If the information is not present, say so clearly.
-
-Include a brief justification stating where in the document this information comes from,
-such as 'Based on paragraph 3 of section 2' or similar.
-
-If the user's question is vague or cannot be answered due to insufficient context, respond with:
-"⚠️ Unable to answer due to insufficient information."
-
-Question: {question}
-
-Document:
-\"\"\"{context[:3000]}\"\"\"
-"""
+    prompt = (
+        f"Answer the following question based strictly on the document context. "
+        f"If the answer is not in the document, say so clearly.\n\n"
+        f"Include a brief justification — e.g., 'Based on paragraph 3' or similar.\n\n"
+        f"Format:\nAnswer: <answer>\nJustification: <reasoning>\n\n"
+        f"Question: {question}"
+    )
 
     try:
         response = generate_text(prompt, context)
@@ -47,11 +47,14 @@ Document:
                 "justification": ""
             }
 
+        # Attempt to extract Answer + Justification
+        answer = response
+        justification = "Justification: Based on document content."
+
         if "Justification:" in response:
-            answer, justification = response.split("Justification:", 1)
-        else:
-            answer = response
-            justification = "Justification: Based on document content."
+            parts = response.split("Justification:", 1)
+            answer = parts[0].strip()
+            justification = parts[1].strip()
 
         return {
             "answer": clean_output(answer),
@@ -59,13 +62,14 @@ Document:
         }
 
     except Exception as e:
-        error_msg = str(e)
-        if "429" in error_msg:
+        err_msg = str(e)
+        if "429" in err_msg:
             return {
-                "answer": "⚠️ Rate limit exceeded. Please upgrade to a paid plan or try again later.",
+                "answer": "⚠️ Rate limit exceeded. Try again later or upgrade your plan.",
                 "justification": ""
             }
+
         return {
-            "answer": f"⚠️ Error generating answer: {error_msg}",
+            "answer": f"⚠️ Error generating answer: {err_msg}",
             "justification": ""
         }
