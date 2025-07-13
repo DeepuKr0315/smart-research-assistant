@@ -3,11 +3,9 @@ from backend.parser import read_document
 from backend.summarizer import generate_summary
 from backend.qa_engine import answer_question
 from backend.challenge_engine import generate_questions, evaluate_answer
-from gradio.themes import Soft
+from gradio.themes.base import Base
 
-theme = Soft()
-
-# --- Core Logic Functions ---
+theme = Base()
 
 def handle_upload(file):
     try:
@@ -17,101 +15,89 @@ def handle_upload(file):
             with open(file.name, 'r', encoding='utf-8') as f:
                 text = f.read()
         else:
-            return "❌ Unsupported file format. Please upload a PDF or TXT.", ""
+            return "❌ Unsupported file format. Please upload PDF or TXT.", "", []
 
         summary_data = generate_summary(text)
         summary = summary_data.get("summary", "⚠️ Summary generation failed.")
-        return summary, text
+        return summary, text, []
 
     except Exception as e:
-        return f"❌ Error processing file: {str(e)}", ""
+        return f"❌ Error: {str(e)}", "", []
 
 def ask_anything(history, question, context):
-    if not context or context.startswith("❌") or context.strip() == "":
-        return history + [["Please upload a valid document first.", None]]
-    
+    if not context or context.startswith("❌") or not question.strip():
+        return history + [["Please upload a valid document and enter a question.", None]]
+
     result = answer_question(question, context)
-    answer = result["answer"]
+    answer = result.get("answer", "⚠️ No answer returned.")
     justification = result.get("justification", "")
-    history.append([question, f"{answer}\n\n{justification}"])
+    history.append([question, f"{answer}\n\n📌 {justification}"])
     return history
 
 def get_challenge_questions(context):
     if not context or context.startswith("❌") or context.strip() == "":
         return "Please upload a valid document first."
-    
     result = generate_questions(context)
-    return result["questions"]
+    return result.get("questions", "⚠️ No questions generated.")
 
 def check_challenge_answer(question, answer, context):
     if not context or context.startswith("❌") or context.strip() == "":
         return "Please upload a valid document first."
-    
     result = evaluate_answer(question, answer, context)
-    return result["feedback"]
+    return result.get("feedback", "⚠️ No feedback generated.")
 
-# --- Gradio UI ---
-with gr.Blocks(title="📚 Smart Assistant for Research", theme=theme) as interface:
+# Final UI
+with gr.Blocks(title="📚 Smart Research Assistant", theme=theme) as interface:
     gr.Markdown("""
-    <div style="text-align:center;">
-        <h1>📚 Smart Assistant for Research</h1>
-        <p><strong>Upload a research paper and ask questions, generate summaries, or test your understanding!</strong></p>
-    </div>
+    # 📚 Smart Research Assistant
+    Upload your research paper and explore intelligent AI interaction.
     """)
-
-    # States
+    
     full_text_state = gr.State("")
     history_state = gr.State([])
 
+    # Upload
     with gr.Row():
-        doc_upload = gr.File(label="📄 Upload PDF or TXT", type="filepath")
+        file_input = gr.File(label="📄 Upload Document (.pdf or .txt)", type="filepath")
     
-    summary_box = gr.Textbox(label="📝 Auto Summary (≤150 words)", lines=6)
+    summary_output = gr.Textbox(label="📝 Auto Summary", lines=5, interactive=False)
 
     with gr.Tabs():
         with gr.TabItem("❓ Ask Anything"):
             with gr.Row():
                 with gr.Column(scale=2):
-                    chat_history = gr.Chatbot(label="Conversation History")
+                    chat = gr.Chatbot(label="💬 Conversation History")
                 with gr.Column(scale=1):
-                    question_input = gr.Textbox(placeholder="e.g., What is the methodology?", show_label=False)
-                    send_btn = gr.Button("📨 Send")
-        
-        with gr.TabItem("🧪 Challenge Me"):
-            question_box = gr.Textbox(label="🧠 Logic-Based Questions", lines=8)
-            user_answer = gr.Textbox(label="Your Answer")
-            eval_btn = gr.Button("✅ Evaluate Answer")
-            feedback_box = gr.Textbox(label="🗣 Feedback", lines=4)
-            generate_btn = gr.Button("🔁 Generate Questions")
+                    question_input = gr.Textbox(placeholder="e.g. What is the main finding?")
+                    ask_btn = gr.Button("📨 Ask")
 
-    # Events
-    doc_upload.upload(
+        with gr.TabItem("🧠 Challenge Me"):
+            with gr.Column():
+                question_box = gr.Textbox(label="🧪 AI-Generated Question", lines=6)
+                user_answer = gr.Textbox(label="🧍 Your Answer", lines=2)
+                eval_btn = gr.Button("✅ Evaluate Answer")
+                feedback_box = gr.Textbox(label="💡 Feedback", lines=3)
+                gen_btn = gr.Button("🧠 Generate Questions")
+
+    # Upload event
+    file_input.upload(
         fn=handle_upload,
-        inputs=doc_upload,
-        outputs=[summary_box, full_text_state]
+        inputs=file_input,
+        outputs=[summary_output, full_text_state, history_state]
     )
 
-    send_btn.click(
+    # Ask Anything event
+    ask_btn.click(
         fn=ask_anything,
         inputs=[history_state, question_input, full_text_state],
         outputs=[history_state]
-    ).then(
-        lambda x: x, inputs=history_state, outputs=chat_history
-    )
+    ).then(lambda x: x, inputs=history_state, outputs=chat)
 
-    generate_btn.click(
-        fn=get_challenge_questions,
-        inputs=full_text_state,
-        outputs=question_box
-    )
+    # Challenge event
+    gen_btn.click(fn=get_challenge_questions, inputs=full_text_state, outputs=question_box)
+    eval_btn.click(fn=check_challenge_answer, inputs=[question_box, user_answer, full_text_state], outputs=feedback_box)
 
-    eval_btn.click(
-        fn=check_challenge_answer,
-        inputs=[question_box, user_answer, full_text_state],
-        outputs=feedback_box
-    )
-
-    gr.Markdown("---\nMade with ❤️ by Deepanshu Kumar")
+    gr.Markdown("---\n🔗 Built with ❤️ by Deepanshu Kumar")
 
 if __name__ == "__main__":
     interface.launch()
