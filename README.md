@@ -18,6 +18,14 @@ Built using 💡 Google Gemini API, 🧠 FastAPI, and 🎨 Gradio — crafted fo
 
 ---
 
+## 🌐 Live Demo
+
+🚀 Try the app live on **Hugging Face Spaces**:  
+🔗 [https://huggingface.co/spaces/DeepFacee/research-summarizer-ai](https://huggingface.co/spaces/DeepFacee/research-summarizer-ai)
+
+> 💬 No setup needed — just upload your document, get summaries, ask questions, and test your understanding.
+
+---
 ## 🚀 Features
 
 - 📂 **Upload** `.pdf` or `.txt` research papers
