@@ -1,75 +1,123 @@
 # 📄 Smart Research Assistant 🤖
 
-An AI-powered assistant that reads research papers (PDF/TXT), generates concise summaries, answers custom questions with document-backed justifications, and challenges users with logic-based questions. Built with 🧠 LLaMA 3, 🧰 FastAPI, and 💡 Gradio.
+An AI-powered assistant that reads research papers (PDF/TXT), generates concise summaries, answers custom questions with document-backed justifications, and challenges users with logic-based comprehension questions.
+
+Built using 💡 Google Gemini API, 🧠 FastAPI, and 🎨 Gradio — crafted for researchers, students, and professionals who need to quickly understand and explore lengthy documents.
 
 ---
 
 ## 🚀 Features
 
-- 📂 **Upload PDF or TXT** documents
-- 📝 **Auto-summary** (≤150 words) using LLaMA 3
-- ❓ **Ask Anything** – free-form Q&A with contextual understanding
-- 🧠 **Challenge Me** – logic-based questions generated from the document
-- 🧾 **Justifications** – every answer backed with a document snippet
-- 🎯 Designed for researchers, students, and document reviewers
+- 📂 **Upload** `.pdf` or `.txt` research papers
+- 📝 **Auto-Summarization** (≤150 words) using Google Gemini
+- ❓ **Ask Anything** — free-form Q&A with citation-style justifications
+- 🧠 **Challenge Me** — logic-based question generator + evaluator
+- 🧾 **Justification Support** — all answers backed by document snippets
+- 🎯 Interactive **Gradio UI** + modular **FastAPI backend**
+- 📡 Gemini fallback handling + API test utility
 
 ---
 
 ## 🧱 Project Structure
+
 ```
 smart-research-assistant/
 │
-├── app.py               # Gradio interface
-├── app_streamlit.py     # Optional Streamlit interface
-├── parser.py            # PDF/TXT parser
-├── summarization.py     # LLaMA 3-based summarizer
-├── qa_engine.py         # Ask Anything engine
-├── challenge_engine.py  # Challenge Me logic
-├── README.md            # Project overview
-├── .gitignore           # Excludes pycache, env files, etc.
+├── backend/                         # All backend logic
+│   ├── parser.py                   # PDF/TXT document parser (pdfplumber)
+│   ├── summarizer.py               # Summary generator using Gemini
+│   ├── qa_engine.py                # Q&A logic via Gemini
+│   ├── challenge_engine.py         # Question generation + evaluation
+│   ├── gemini_client.py            # Gemini API wrapper
+│   └── models.py                   # Pydantic models for FastAPI
+|	└── main.py                         # FastAPI main application
+│
+├── frontend/
+│   └── app.py                      # Gradio interface
+│
+
+├── .env                            # Environment file (GEMINI_API_KEY)
+├── requirements.txt                # Python dependencies
+└── README.md                       # Project documentation
 ```
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** Gradio / Streamlit
-- **Backend:** FastAPI
-- **LLM:** LLaMA 3 via Ollama
-- **Vector Search:** FAISS
-- **Parsing:** PyMuPDF
-- **Embeddings:** sentence-transformers
-- **Extras:** LangChain (optional memory), Markdown formatting, Justification snippets
+| Layer     | Tools/Frameworks              |
+|-----------|-------------------------------|
+| LLM       | 🌐 Google Gemini API (`gemini-2.5-flash`) |
+| Frontend  | 🎨 Gradio                    |
+| Backend   | ⚙️ FastAPI + Pydantic         |
+| Parsing   | 📄 pdfplumber                 |
+| Hosting   | 🔁 Uvicorn (Local Server)     |
 
 ---
 
 ## ⚙️ Setup Instructions
 
-### 1. 🧩 Install Dependencies
+### 1. 📦 Install Required Packages
+
+```pip install -r requirements.txt```
+**Or manually:** ```pip install fastapi uvicorn gradio python-dotenv pdfplumber google-generativeai```
+
+## 2. 🔐 Configure Environment
+
+Create a `.env` file in the root directory with your Gemini API key:
+
 ```
-pip install fastapi uvicorn gradio langchain sentence-transformers faiss-cpu pymupdf
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-### 2. 📥 Install Ollama & LLaMA 3
-•	Download Ollama: https://ollama.com/download
-•	Pull the model:
-    `ollama pull llama3`
+> 💡 Make sure you do **not** share your `.env` file or expose your API key in public repositories.
 
-### 3. 🚀 Run the Application
-Option A: Gradio Interface
-`python app.py`
+## 3. 🚀 Run the App
 
-Option B: Streamlit Interface
-`streamlit run app_streamlit.py`
+### ➤ Start the FastAPI backend server:
 
-## 💡 Usage Guide
-	1.	Upload a .pdf or .txt file.
-	2.	View auto-generated summary in the Summary tab.
-	3.	Switch to Ask Anything tab to ask questions.
-	4.	Use Challenge Me tab to test your understanding with AI-generated logic questions.
+```
+uvicorn backend.main:app --reload
+```
+
+This will start the backend on: `http://127.0.0.1:8000`
+
+### ➤ Launch the Gradio frontend:
+
+```
+python frontend/app.py
+```
+
+This will open the smart assistant in your browser (usually at `http://127.0.0.1:7860`).
+
+---
+
+---
+
+## 📮 API Endpoints (For Postman)
+
+| Method | Endpoint       | Description                        |
+|--------|----------------|------------------------------------|
+| POST   | `/upload`      | Upload a document (PDF/TXT)        |
+| POST   | `/summarize`   | Generate summary from text         |
+| POST   | `/qa`          | Answer custom question             |
+| POST   | `/challenge`   | Generate logic-based questions     |
+| POST   | `/evaluate`    | Evaluate user’s answer             |
+
+---
+
+## 🧪 Usage Flow
+
+1. 📂 Upload a `.pdf` or `.txt` document
+2. 📝 Read its summary (auto-generated)
+3. ❓ Ask questions about the document
+4. 🧠 Try answering logic-based questions and get feedback
+5. 📚 Review all justifications to build deeper understanding
+
+---
 
 ## 🙌 Credits
 
-Built by Deepanshu Kumar as part of EZ’s Intern Task.
-
-Inspired by real-world document assistants and powered by open-source LLMs.
+Built with ❤️ by **Deepanshu Kumar**  
+🎓 Task submitted for **EZ Intern Assignment (NIET - July 2025)**  
+Inspired by document intelligence tools and educational copilots.
