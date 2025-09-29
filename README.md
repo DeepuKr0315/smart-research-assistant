@@ -133,10 +133,3 @@ This will open the smart assistant in your browser (usually at `http://127.0.0.1
 4. 🧠 Try answering logic-based questions and get feedback
 5. 📚 Review all justifications to build deeper understanding
 
----
-
-## 🙌 Credits
-
-Built with ❤️ by **Deepanshu Kumar**  
-🎓 Task submitted for **EZ Intern Assignment (NIET - July 2025)**  
-Inspired by document intelligence tools and educational copilots.
